@@ -1,0 +1,24 @@
+upstream fastcgi_backend {
+  server unix:/var/run/docker.sock;
+}
+
+server {
+  listen 80;
+  return 301 https://$host$request_uri;
+}
+
+server {
+  listen 443 ssl;
+
+  ssl_certificate             /etc/nginx/certs/cert.pem;
+  ssl_certificate_key         /etc/nginx/certs/key.pem;
+
+  client_max_body_size        10M;
+
+  set MAGE_ROOT /var/www/html;
+
+  access_log /var/log/nginx/access.log;
+  error_log /var/log/nginx/error.log;
+
+  include /var/www/html/nginx[.]conf;
+}
